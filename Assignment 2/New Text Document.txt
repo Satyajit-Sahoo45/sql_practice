@@ -1,0 +1,253 @@
+ASSIGNMENT ON MAX & MIN:
+-----------------------
+
+
+ans 41: SELECT emp_name, salary FROM Employee WHERE salary=(SELECT MAX(salary) FROM Employee);
+
+ans 42: SELECT emp_name, salary FROM Employee WHERE salary=(SELECT MIN(salary) FROM Employee);
+
+ans 43: SELECT emp_name, hiredate FROM Employee WHERE hiredate=(SELECT MIN(hiredate) FROM Employee);
+
+ans 44: SELECT emp_name, hiredate FROM Employee WHERE hiredate=(SELECT MAX(hiredate) FROM Employee);
+
+ans 45: SELECT emp_name, comm FROM Employee WHERE comm=(SELECT MIN(comm) FROM Employee);
+
+ans 46: SELECT emp_name, salary, comm FROM Employee WHERE comm=(SELECT MAX(comm) FROM Employee);
+
+ans 47: SELECT * FROM Employee WHERE emp_id=(SELECT MAX(emp_id) FROM Employee);
+
+ans 48: SELECT * FROM Employee WHERE hiredate=(SELECT MIN(hiredate) FROM Employee);
+
+ans 49: SELECT * FROM Employee WHERE salary=(SELECT MIN(salary) FROM Employee);
+
+ans 50: SELECT emp_name, salary*12 FROM Employee WHERE salary*12 > ALL(SELECT salary*12 FROM Employee WHERE dept_name='IT');
+
+	select e1.emp_name, (e1.salary*12) as annual_salary from employee e1 
+	join (select max(salary) as max_salary 
+	from employee 
+	where dept_name='IT') as e2 
+	ON (e1.salary*12) > (e2.max_salary*12);
+
+	select e.emp_name, (e.salary*12) from employee e, employee s 
+	where s.dept_name='IT' 
+	group by e.emp_name, e.salary 
+	having (e.salary*12) > MAX(s.salary*12);
+
+
+ASSIGNMENT ON SUB-QUERY:
+-----------------------
+
+ans 51: SELECT emp_name FROM Employee WHERE salary > ALL(SELECT salary FROM Employee WHERE dept_name='IT');
+	
+	SELECT e.emp_name FROM Employee as e
+	JOIN (
+		SELECT MAX(salary) as max_salary
+		FROM Employee
+		WHERE dept_name='IT'
+	     ) as s
+	ON e.salary > s.max_salary;
+
+
+ans 52: SELECT * FROM Employee WHERE hiredate>(SELECT MAX(hiredate) FROM Employee WHERE dept_name='clerk');
+
+	SELECT * FROM Employee as e
+	JOIN (
+		select MAX(hiredate) as max_hiredate
+		FROM Employee
+		WHERE dept_name='clerk'
+	     ) as s
+	ON e.hiredate > s.max_hiredate;
+
+
+ans 53: SELECT emp_nam, salary FROM Employee;
+
+ans 54: SELECT * FROM Employee WHERE hiredate<(SELECT MIN(hiredate) FROM Employee WHERE dept_name='manager');
+
+ans 55: SELECT *
+	FROM Employee
+	WHERE hiredate > (
+        	  SELECT MAX(hiredate) 
+	          FROM Employee 
+	          WHERE dept_name = 'manager'
+	)
+	AND salary > (
+        	  SELECT MAX(salary) 
+	          FROM Employee 
+        	  WHERE dept_name = 'clerk'
+	);
+
+ans 56: SELECT * FROM Employee WHERE dept_name='clerk' AND hiredate < ANY(SELECT hiredate FROM Employee WHERE dept_name='salesman');
+
+ans 57: SELECT * FROM Employee WHERE dept_name='accounting' OR dept_name='salesman';
+
+ans 58: SELECT d.dept_name FROM Employee e
+	JOIN deparment d
+	ON e.dept_id = d.dept_id
+	WHERE e.emp_name IN ('SMITH', 'KING', 'MILLER');
+
+ans 59: SELECT * 
+	FROM Employee
+	WHERE dept_id IN (SELECT dept_id FROM department WHERE location IN ('NEWYORK', 'CHICAGO'));
+
+ans 60: SELECT emp_name 
+	FROM Employee
+	WHERE hiredate > ALL(SELECT hiredate FROM Employee WHERE dept_no=10);
+
+
+ASSIGNMENT ON NESTIED SUBQUERY:
+------------------------------
+
+ans 61: select salary from employee order by salary ASC LIMIT 1 offset 1;
+
+ans 62:  select salary as fifth_max_salary from employee order by salary ASC LIMIT 1 OFFSET 5;
+
+ans 63:  select emp_name, salary
+    	 from employee
+	 where salary = (
+    	 	select MAX(salary) from employee where salary < (
+		         select MAX(salary) from employee where salary < (
+			         select MAX(salary) from employee )
+			 )
+		);
+
+
+ans 64: select emp_id, emp_name, salary
+    	from employee
+    	where salary = (
+    	    select MAX(salary) from employee where salary < (
+    		select MAX(salary) from employee )
+	    );
+
+ans 65: select emp_name, dept_name
+    	from employee
+    	where salary = (
+        	select MAX(salary) from employee where salary < (
+		        select MAX(salary) from employee where salary < (
+			        select MAX(salary) from employee where salary < (
+				        select MAX(salary) from employee )
+				)
+			)
+		);
+
+ans 66: SELECT *
+    	FROM employee
+	WHERE hiredate = (
+        	 SELECT hiredate FROM employee
+	         ORDER BY hiredate
+        	 LIMIT 1 OFFSET 1
+        );
+
+ans 67: select emp_name from employee
+    	where hiredate = (
+		 select hiredate from employee
+	    	 order by hiredate desc LIMIT 1 OFFSET 1);
+
+
+	select emp_name from employee
+    	where hiredate = (
+    		select MAX(hiredate) from employee where hiredate < (
+	  		select MAX(hiredate) from employee));
+
+ans 68: select ename, loc
+	from (
+		select e.ename, d.loc
+		from emp e
+		join dept d
+		on d.deptno = e.deptno
+		order by hiredate
+	)
+	where ROWNUM 1;
+
+ans 69: select * from emp
+	where sal = (
+		select MIN(sal) from emp where sal > (
+			select MIN(sal) from emp where sal > (
+				select MIN(sal) from emp where sal > (
+					select MIN(sal) from emp where sal > (
+						select MIN(sal) from emp where sal > (
+							select MIN(sal) from emp where sal > (
+								select MIN(sal) from emp)))))));
+
+
+ans 70: select d.dname, e.ename from emp e
+	join dept d
+	on e.DEPTNO = d.DEPTNO
+	where sal = (
+		select MAX(sal) from emp where sal < (
+			select MAX(sal) from emp ));
+
+
+ASSIGNMENT ON EMP & MANAGER RELATION:
+------------------------------------
+
+ans 71:  SELECT M.ENAME AS MANAGER_NAME 
+	 FROM EMP E 
+	 JOIN EMP M 
+	 ON E.MGR=M.EMPNO 
+	 WHERE E.ENAME='SMITH';
+
+ans 72:  SELECT M.ENAME AS MANAGER_NAME
+ 	 FROM EMP E 
+	 JOIN EMP M 
+	 ON E.MGR=M.EMPNO 
+	 WHERE E.ENAME='ADAMS';
+
+ans 73: SELECT D.DNAME
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR = M.EMPNO
+	JOIN DEPT D
+	ON D.DEPTNO=M.DEPTNO
+	WHERE E.ENAME='JONES';
+
+ans 74: SELECT M.SAL
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGE=M.EMPNO
+	WHERE E.ENAME='MILLER';
+
+ans 75: SELECT D.LOC
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	JOIN EMP MM
+	ON M.MGR=MM.EMPNO
+	JOIN DEPT D
+	ON M.DEPTNO=D.DEPTNO
+	WHERE E.ENAME='SMITH';
+
+
+ans 76: SELECT E.ENAME
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	WHERE M.ENAME='BLAKE';
+
+ans 77: SELECT COUNT(*) AS NO_OF_EMP_REPORTING_TO
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	WHERE M.ENAME='KING';
+
+ans 78: SELECT E.*
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	WHERE M.ENAME='JONES';
+
+ans 79: SELECT E.ENAME
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	WHERE M.EMPNO=(SELECT MGR FROM EMP WHERE ENAME='BLAKE');
+
+ans 80: SELECT COUNT(*) AS NO_OF_EMP_REPORTING_TO
+	FROM EMP E
+	JOIN EMP M
+	ON E.MGR=M.EMPNO
+	WHERE M.EMPNO=(SELECT MGR FROM EMP WHERE ENAME='FORD');
+
+
+
+
+
